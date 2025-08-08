@@ -59,13 +59,13 @@
 ### Home & Profile Pages
 
 <div style="display: flex; gap: 10px;">
-- <img src="./assets/appimg/home.jpeg" alt="Home Page Screenshot" width="300"/>
-- <img src="./assets/appimg/profile.jpeg" alt="Profile Page Screenshot" width="300"/>
+- <img src="./assets/appimg/home.jpg" alt="Home Page Screenshot" width="300"/>
+- <img src="./assets/appimg/profile.jpg" alt="Profile Page Screenshot" width="300"/>
 </div>
 
 <div style="display: flex; gap: 10px;">
-- <img src="./assets/appimg/posts.jpeg" alt="Home Page Screenshot" width="300"/>
-- <img src="./assets/appimg/createpost.jpeg" alt="Profile Page Screenshot" width="300"/>
+- <img src="./assets/appimg/posts.jpg" alt="Home Page Screenshot" width="300"/>
+- <img src="./assets/appimg/createpost.jpg" alt="Profile Page Screenshot" width="300"/>
 </div>
 ## 🛠 Technologies Used
 
