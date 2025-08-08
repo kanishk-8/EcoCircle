@@ -63,6 +63,8 @@
 - <img src="./assets/appimg/profile.jpg" alt="Profile Page Screenshot" width="300"/>
 </div>
 
+### Posts & Create Post
+
 <div style="display: flex; gap: 10px;">
 - <img src="./assets/appimg/posts.jpg" alt="Home Page Screenshot" width="300"/>
 - <img src="./assets/appimg/createpost.jpg" alt="Profile Page Screenshot" width="300"/>
