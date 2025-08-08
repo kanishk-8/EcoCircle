@@ -59,10 +59,14 @@
 ### Home & Profile Pages
 
 <div style="display: flex; gap: 10px;">
-- <img src="./assets/appimg/homepage.jpeg" alt="Home Page Screenshot" width="300"/>
-- <img src="./assets/appimg/profilepage.jpeg" alt="Profile Page Screenshot" width="300"/>
+- <img src="./assets/appimg/home.jpeg" alt="Home Page Screenshot" width="300"/>
+- <img src="./assets/appimg/profile.jpeg" alt="Profile Page Screenshot" width="300"/>
 </div>
 
+<div style="display: flex; gap: 10px;">
+- <img src="./assets/appimg/posts.jpeg" alt="Home Page Screenshot" width="300"/>
+- <img src="./assets/appimg/createpost.jpeg" alt="Profile Page Screenshot" width="300"/>
+</div>
 ## 🛠 Technologies Used
 
 - **React Native**: Core framework for building the cross-platform mobile app
