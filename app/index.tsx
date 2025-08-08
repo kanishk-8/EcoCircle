@@ -55,15 +55,70 @@ const landingpage = () => {
     setLoading(true);
     try {
       if (isSignUp) {
+        // Validate email and password before sending to Supabase
+        if (!emailAddress.trim()) {
+          Alert.alert("Error", "Please enter a valid email address");
+          setLoading(false);
+          return;
+        }
+        if (password.length < 6) {
+          Alert.alert("Error", "Password must be at least 6 characters long");
+          setLoading(false);
+          return;
+        }
+
+        console.log("Starting signup process...");
         const { error, session } = await auth.signup(emailAddress, password);
-        if (error) Alert.alert(error.message);
-        else Alert.alert("Please check your inbox for email verification!");
+
+        if (error) {
+          console.error("Signup failed:", error);
+
+          // Handle specific error cases
+          if (error.message?.includes("User already registered")) {
+            Alert.alert(
+              "Account Exists",
+              "An account with this email already exists. Please try signing in instead.",
+              [{ text: "OK", onPress: () => setIsSignUp(false) }],
+            );
+          } else if (error.message?.includes("Email not confirmed")) {
+            Alert.alert(
+              "Email Confirmation Required",
+              "Please check your email and click the confirmation link before signing in.",
+            );
+          } else if (error.message?.includes("Invalid email")) {
+            Alert.alert("Error", "Please enter a valid email address");
+          } else if (error.message?.includes("Password")) {
+            Alert.alert("Error", "Password must be at least 6 characters long");
+          } else {
+            Alert.alert(
+              "Signup Failed",
+              error.message ||
+                "An unexpected error occurred. Please try again.",
+            );
+          }
+        } else {
+          // Success case
+          if (session) {
+            Alert.alert("Welcome!", "Account created successfully!", [
+              { text: "OK", onPress: () => router.push("/(tabs)/home") },
+            ]);
+          } else {
+            Alert.alert(
+              "Almost Done!",
+              "Please check your inbox for email verification!",
+            );
+          }
+        }
       } else {
         await auth.login(emailAddress, password);
         router.push("/(tabs)/home");
       }
     } catch (error: any) {
-      Alert.alert(error.message);
+      console.error("Auth error:", error);
+      Alert.alert(
+        "Error",
+        error.message || "An unexpected error occurred. Please try again.",
+      );
     }
     setLoading(false);
   }
@@ -71,7 +126,15 @@ const landingpage = () => {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text>Loading...</Text>
+        <LottieView
+          autoPlay
+          loop={true}
+          style={styles.loadingAnimation}
+          source={require("../assets/images/plant.json")}
+        />
+        <Text style={styles.loadingText}>
+          {isSignUp ? "Creating your account..." : "Signing you in..."}
+        </Text>
       </View>
     );
   }
@@ -287,5 +350,15 @@ const styles = StyleSheet.create({
   lottieAnimation: {
     width: 400,
     height: 400,
+  },
+  loadingAnimation: {
+    width: 200,
+    height: 200,
+  },
+  loadingText: {
+    fontSize: 18,
+    color: "#666",
+    marginTop: 20,
+    textAlign: "center",
   },
 });

@@ -15,7 +15,7 @@ const AuthContext = createContext<{
   login: (email: string, password: string) => Promise<void>;
   signup: (
     email: string,
-    password: string
+    password: string,
   ) => Promise<{ error: any; session: Session | null }>;
   logout: () => Promise<void>;
   isUser: boolean;
@@ -42,18 +42,107 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const { error, data } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
-    setSession(data.session);
+    try {
+      console.log("Attempting login for email:", email);
+      const { error, data } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password,
+      });
+
+      if (error) {
+        console.error("Login error:", error);
+        throw error;
+      }
+
+      console.log("Login successful for user:", data.user?.id);
+      setSession(data.session);
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
   };
 
   const signup = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    setSession(data.session);
-    return { error, session: data.session };
+    try {
+      console.log("Attempting signup for email:", email);
+      console.log("Supabase URL:", process.env.EXPO_PUBLIC_SUPABASE_URL);
+      console.log("Current session before signup:", session?.user?.id);
+
+      // Check if user already exists
+      const { data: existingUser } = await supabase.auth.getUser();
+      if (existingUser.user) {
+        console.log("User already logged in, signing out first");
+        await supabase.auth.signOut();
+      }
+
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password,
+        options: {
+          emailRedirectTo: undefined,
+          data: {
+            email: email.trim().toLowerCase(),
+          },
+        },
+      });
+
+      if (error) {
+        console.error("Signup error:", error);
+        console.error("Error details:", {
+          message: error.message,
+          status: error.status,
+          code: error.code || "no_code",
+          name: error.name,
+        });
+
+        // Check for specific database errors
+        if (error.message?.includes("Database error")) {
+          console.error(
+            "Database error detected - check Supabase triggers and RLS policies",
+          );
+        }
+
+        return { error, session: null };
+      }
+
+      console.log("Signup response data:", {
+        user: data.user
+          ? {
+              id: data.user.id,
+              email: data.user.email,
+              email_confirmed_at: data.user.email_confirmed_at,
+              created_at: data.user.created_at,
+            }
+          : null,
+        session: data.session
+          ? {
+              access_token: !!data.session.access_token,
+              refresh_token: !!data.session.refresh_token,
+              expires_at: data.session.expires_at,
+            }
+          : null,
+      });
+
+      // Only set session if it exists
+      if (data.session) {
+        setSession(data.session);
+      }
+
+      return { error: null, session: data.session };
+    } catch (unexpectedError: any) {
+      console.error("Unexpected signup error:", unexpectedError);
+      console.error("Error stack:", unexpectedError.stack);
+
+      return {
+        error: {
+          message:
+            unexpectedError.message ||
+            "An unexpected error occurred during signup",
+          originalError: unexpectedError,
+        },
+        session: null,
+      };
+    }
   };
 
   const logout = async () => {
