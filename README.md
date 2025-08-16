@@ -69,6 +69,7 @@
 - <img src="./assets/appimg/posts.jpg" alt="Home Page Screenshot" width="300"/>
 - <img src="./assets/appimg/createpost.jpg" alt="Profile Page Screenshot" width="300"/>
 </div>
+
 ## 🛠 Technologies Used
 
 - **React Native**: Core framework for building the cross-platform mobile app
